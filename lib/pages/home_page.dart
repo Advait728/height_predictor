@@ -334,7 +334,30 @@ class _HomePageState extends State<HomePage> {
   Widget _buildResultCard() {
     final screenH = MediaQuery.of(context).size.height;
 
-    double scale(double s) => s * (screenH * 0.0013);
+    bool small = screenH < 700;
+    bool medium = screenH >= 700 && screenH < 850;
+    bool large = screenH >= 850;
+
+    double cardPadding = small
+        ? 12
+        : medium
+        ? 18
+        : 26;
+    double cardRadius = small
+        ? 20
+        : medium
+        ? 26
+        : 32;
+    double titleSize = small
+        ? 14
+        : medium
+        ? 18
+        : 22;
+    double heightSize = small
+        ? 32
+        : medium
+        ? 40
+        : 48;
 
     final isIn = _isIn;
     final h = _predictedHeight ?? 0;
@@ -345,15 +368,17 @@ class _HomePageState extends State<HomePage> {
 
     return Container(
       width: double.infinity,
-      key: const ValueKey("resultCard"),
-
-      margin: EdgeInsets.only(top: scale(8), bottom: scale(8)),
-
-      padding: EdgeInsets.symmetric(vertical: scale(8), horizontal: scale(8)),
-
+      margin: EdgeInsets.only(
+        top: small
+            ? 8
+            : medium
+            ? 16
+            : 26,
+      ),
+      padding: EdgeInsets.all(cardPadding),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 255, 255, 255),
-        borderRadius: BorderRadius.circular(scale(28)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(cardRadius),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.12),
@@ -362,48 +387,41 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: EdgeInsets.only(top: scale(6)),
-            child: Text(
-              "PREDICTED ADULT HEIGHT",
-              style: TextStyle(
-                fontSize: scale(16),
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
-              ),
+          Text(
+            "PREDICTED ADULT HEIGHT",
+            style: TextStyle(
+              fontSize: titleSize,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.8,
             ),
           ),
 
-          SizedBox(height: scale(8)),
+          SizedBox(height: cardPadding / 2),
 
           Text(
             display,
             style: TextStyle(
-              fontSize: scale(44),
+              fontSize: heightSize,
               fontWeight: FontWeight.w900,
               color: Color(0xFFB388FF),
             ),
           ),
 
-          SizedBox(height: scale(5)),
+          SizedBox(height: cardPadding / 3),
 
           Text(
             "EXPECTED RANGE",
-            textAlign: TextAlign.center,
             style: TextStyle(
-              height: 1.3,
-              fontSize: scale(13),
+              fontSize: titleSize - 2,
               fontWeight: FontWeight.w600,
-              letterSpacing: 0.6,
               color: Colors.black54,
             ),
           ),
 
-          SizedBox(height: scale(5)),
+          SizedBox(height: 4),
 
           Text(
             isIn
@@ -413,11 +431,7 @@ class _HomePageState extends State<HomePage> {
                     return "${low ~/ 12}'${low % 12}\"  -  ${high ~/ 12}'${high % 12}\"";
                   }()
                 : "${(_predictedHeight! - 5).round()} - ${(_predictedHeight! + 5).round()} cm",
-            style: TextStyle(
-              height: 1.4,
-              fontSize: scale(15),
-              color: Colors.black87,
-            ),
+            style: TextStyle(fontSize: titleSize - 1),
           ),
         ],
       ),
@@ -426,6 +440,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenH = MediaQuery.of(context).size.height;
+
+    bool small = screenH < 700;
+    bool medium = screenH >= 700 && screenH < 850;
+    bool large = screenH >= 850;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
@@ -459,7 +479,13 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 110),
+                  SizedBox(
+                    height: small
+                        ? 120
+                        : medium
+                        ? 150
+                        : 170,
+                  ),
                   genderSelector(),
                   const SizedBox(height: 20),
                   unitSelector(),
@@ -677,7 +703,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                   ),
-                  const Spacer(),
+                  SizedBox(height: 10),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 400),
                     transitionBuilder: (child, animation) {
